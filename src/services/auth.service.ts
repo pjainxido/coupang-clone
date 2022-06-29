@@ -1,5 +1,6 @@
-import axios from 'axios';
 import cookies from 'js-cookie';
+
+import RequestService from './request.service';
 
 type SignupAgreements = {
   privacy: boolean;
@@ -12,40 +13,12 @@ type SignupAgreements = {
     | false;
 };
 
-export class AuthService {
+export class AuthService extends RequestService{
   setToken(accessToken: string, refreshToken: string) {
     cookies.set('accessToken', accessToken, { expires: 1 });
     cookies.set('refreshToken', refreshToken, { expires: 7 });
   }
 
-  async getWithAuthorization(route: string, token?: string) {
-    const { data } = await axios.get(
-      process.env.NEXT_PUBLIC_API_HOST + route,
-      token
-        ? {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        : undefined
-    );
-    return data;
-  }
-
-  async postWithAuthorization(route: string, body: any, token?: string) {
-    const { data } = await axios.post(
-      process.env.NEXT_PUBLIC_API_HOST + route,
-      body,
-      token
-        ? {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        : undefined
-    );
-    return data;
-  }
   /** refreshToken을 이용해 새로운 토큰을 발급받습니다. */
   async refresh() {
     const refreshToken = cookies.get('refreshToken');
@@ -53,7 +26,7 @@ export class AuthService {
       return;
     }
 
-    const data = await this.postWithAuthorization('/auth/refresh', null, refreshToken);
+    const data = await this.postHostAPI('/auth/refresh', null, refreshToken);
     this.setToken(data.access, data.refresh);
   }
 
@@ -65,7 +38,7 @@ export class AuthService {
     phoneNumber: string,
     agreements: SignupAgreements
   ) {
-    const data = await this.postWithAuthorization('/auth/signup', {
+    const data = await this.postHostAPI('/auth/signup', {
       email,
       password,
       name,
@@ -78,7 +51,7 @@ export class AuthService {
 
   /** 이미 생성된 계정의 토큰을 발급받습니다. */
   async login(email: string, password: string) {
-    const data = await this.postWithAuthorization('/auth/signup', {
+    const data = await this.postHostAPI('/auth/signup', {
       email,
       password,
     });

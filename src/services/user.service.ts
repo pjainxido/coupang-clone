@@ -1,20 +1,20 @@
 import cookies from 'js-cookie';
 
-import { AuthService } from './auth.service';
+import RequestService from './request.service';
 
-class UserService extends AuthService {
+class UserService extends RequestService {
   async me() {
     const accessToken = cookies.get('accessToken');
     if (!accessToken) {
       return;
     }
-    const data = await this.getWithAuthorization('/user/me', accessToken);
+    const data = await this.getHostAPI('/user/me', accessToken);
 
     return data;
   }
 
   async read(id: number) {
-    const data = await this.getWithAuthorization('/users/' + id);
+    const data = await this.getHostAPI('/users/' + id);
     return data;
   }
 }
