@@ -1,9 +1,14 @@
 import axios, { AxiosRequestHeaders } from 'axios';
 
-export default class RequestService {
-  async getHostAPI(route: string, token?: string, customHeader?: AxiosRequestHeaders) {
+export class RequestService {
+  baseUrl = process.env.NEXT_PUBLIC_API_HOST;
+  constructor(baseUrl?: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  async getRequest(route: string, token?: string, customHeader?: AxiosRequestHeaders) {
     const { data } = await axios.get(
-      process.env.NEXT_PUBLIC_API_HOST + route,
+      this.baseUrl + route,
       token
         ? {
             headers: {
@@ -16,9 +21,9 @@ export default class RequestService {
     return data;
   }
 
-  async postHostAPI(route: string, body: any, token?: string, customHeader?: AxiosRequestHeaders) {
+  async postRequest(route: string, body: any, token?: string, customHeader?: AxiosRequestHeaders) {
     const { data } = await axios.post(
-      process.env.NEXT_PUBLIC_API_HOST + route,
+      this.baseUrl + route,
       body,
       token
         ? {
@@ -31,3 +36,5 @@ export default class RequestService {
     return data;
   }
 }
+
+export default new RequestService();
