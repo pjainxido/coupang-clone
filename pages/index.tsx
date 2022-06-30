@@ -1,23 +1,16 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useQuery } from 'react-query';
-
-import { UserService } from '../src/services';
+import { useUserRead, useUserMe } from '../src/hooks/user.hook';
 
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
-  const { data: me } = useQuery('me', UserService.me, {
-    // refetchInterval: 500,
-  });
+  const { data } = useUserMe();
+  const { data: read} = useUserRead(10);
 
-  const { data: read } = useQuery('read', async () => await UserService.read(10), {
-    // refetchInterval: 500,
-  });
-
-  console.log('내 정보입니다', me);
-  console.log('내 정보입니다', read);
+  console.log('내 정보입니다',data);
+  console.log('id 10번 user의 정보입니다', read);
 
   return (
     <div className={styles.container}>

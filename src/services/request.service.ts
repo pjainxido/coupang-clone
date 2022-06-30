@@ -3,7 +3,7 @@ import axios, { AxiosRequestHeaders } from 'axios';
 export class RequestService {
   baseUrl = process.env.NEXT_PUBLIC_API_HOST;
   constructor(baseUrl?: string) {
-    this.baseUrl = baseUrl;
+    if (baseUrl) this.baseUrl = baseUrl;
   }
 
   async getRequest(route: string, token?: string, customHeader?: AxiosRequestHeaders) {
